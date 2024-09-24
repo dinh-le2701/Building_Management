@@ -1,32 +1,72 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Pressable, TextInput } from 'react-native';
+import React, { useState,} from 'react';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-const SignUp= ({ navigation, route }) => {
+const SignUp= ({ navigation }) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "", 
+    password: ""
+});
+
+const handleChange = (name, value) => {
+  setFormData({
+    ...formData,
+    [name]: value
+  });
+};
+
+const handleSignUp = async (e) => {
+    e.preventDefault();
+    const response = await fetch('http://localhost:1999/auth/signup', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    });
+    const data = await response.json();
+    console.log(data); // Hiển thị phản hồi từ API
+}
+
   return (
     <View style={styles.container}>
       <Image style={styles.img_background} source={require('../img/building.jpg')}/>
+      <Pressable style={styles.arrowleft} 
+                 onPress={()=>navigation.navigate('Home')} 
+                 >
+      <AntDesign name="arrowleft" size={30} color="white" />            
+      </Pressable>
       <View style={styles.content_signup}>
           <View style={styles.user}>
             <Text style={styles.text}>Full Name</Text>
-            <TextInput style={styles.textinput} placeholder = 'Enter your full name'/>
+            <TextInput style={styles.textinput} 
+                       placeholder = 'Enter your full name'
+                       secureTextEntry={true}
+                       value={formData.name}
+                       onChangeText={(text) => handleChange('name', text)}/>
           </View>
 
-          <View style={styles.user}>
-            <Text style={styles.text}>Phone</Text>
-            <TextInput style={styles.textinput} placeholder = 'Enter your phone number'/>
-          </View>
-
-          <View style={styles.user}>
+          <View style={styles.user} onSubmit={handleSignUp}>
             <Text style={styles.text}>Email</Text>
-            <TextInput style={styles.textinput} placeholder = 'Enter your email'/>
+            <TextInput style={styles.textinput} 
+                       placeholder = 'Enter your email'
+                       secureTextEntry={true}
+                       value={formData.email}
+                       onChangeText={(text) => handleChange('email', text)}/>
           </View>
 
           <View style={styles.user}>
             <Text style={styles.text}>Password</Text>
-            <TextInput style={styles.textinput} placeholder = 'Enter password'/>
+            <TextInput style={styles.textinput} 
+                       placeholder = 'Enter password'
+                       secureTextEntry={true}
+                       value={formData.password}
+                       onChangeText={(text) => handleChange('password', text)}/>
           </View>
 
-          <Pressable style={styles.btn_signup} onPress={() => navigation.navigate('Home')}>
+          <Pressable style={styles.btn_signup} onPress={handleSignUp}>
             <Text style={styles.text_btn_signup}>Sign Up</Text>
           </Pressable>
 
@@ -54,7 +94,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    marginTop: -50
+    marginTop: -140
     
   },
   content_signup:{
@@ -112,6 +152,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#01BAB4',
     marginTop: 2
+  },
+  arrowleft:{
+    position: 'absolute',
+    left: 20,
+    top: 20,
+   
   },
 
 });

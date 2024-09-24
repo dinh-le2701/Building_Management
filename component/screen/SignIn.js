@@ -1,31 +1,73 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Pressable, TextInput } from 'react-native';
+import React, { useState,} from 'react';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-const SignIn= ({navigation, route}) => {
+const SignIn= ({navigation}) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (name, value) => {
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    const response = await fetch('http://localhost:1999/auth/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+    const data = await response.json();
+    console.log(data);
+  }
+
   return (
     <View style={styles.container}>
       <Image style={styles.img_background} source={require('../img/building.jpg')}/>
+      <Pressable style={styles.arrowleft} 
+                 onPress={()=>navigation.navigate('Home')}
+      >
+        <AntDesign name="arrowleft" size={30} color="white" />            
+      </Pressable>
+      
       <View style={styles.content_signin}>
-          <View style={styles.user}>
+          <View style={styles.user} onSubmit={handleSignIn}>
             <Text style={styles.text}>Email</Text>
-            <TextInput style={styles.textiput} placeholder = 'Enter your email'/>
+            <TextInput style={styles.textiput} 
+                placeholder = 'Enter your email'
+                secureTextEntry={true}
+                value={formData.email}
+                onChangeText={(text) => handleChange('email', text)}
+                />
           </View>
 
           <View style={styles.user}>
             <Text style={styles.text}>Password</Text>
-            <TextInput style={styles.textiput} placeholder = 'Enter password'/>
+            <TextInput style={styles.textiput} 
+                       placeholder = 'Enter password'
+                       secureTextEntry={true}
+                       value={formData.password}
+                        onChangeText={(text) => handleChange('password', text)}
+                    />
           </View>
-      <Pressable style={styles.btn_signin} onPress={() => navigation.navigate('Resident_Home')}>
-        <Text style={styles.text_btn_signin}>Sign In</Text>
-      </Pressable>
+        <Pressable style={styles.btn_signin} onPress={handleSignIn}>
+          <Text style={styles.text_btn_signin}>Sign In</Text>
+        </Pressable>
 
-      <View style={styles.question}>
-          <Text style={styles.text_question}>Don't have an account?</Text>
-          <Pressable style={styles.link_question} onPress={() => navigation.navigate('SignUp')}>
-            <Text style={styles.text_link_question}>Sign Up</Text>
-          </Pressable>
-  
-      </View>
+        <View style={styles.question}>
+            <Text style={styles.text_question}>Don't have an account?</Text>
+            <Pressable style={styles.link_question} onPress={() => navigation.navigate('SignUp')}>
+              <Text style={styles.text_link_question}>Sign Up</Text>
+            </Pressable>
+    
+        </View>
       </View>
       
     </View>
@@ -44,7 +86,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    marginTop: -100
+    marginTop: -150
     
   },
   content_signin:{
@@ -108,6 +150,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#01BAB4',
     marginTop: 2
+  },
+
+  arrowleft:{
+    position: 'absolute',
+    left: 20,
+    top: 20,
+   
   },
 
 });
