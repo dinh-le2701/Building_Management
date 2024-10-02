@@ -17,22 +17,31 @@ const SignIn= ({navigation}) => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:1999/auth/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    });
-    const data = await response.json();
-    console.log(data);
-  }
+    try {
+      const response = await fetch('http://localhost:1999/auth/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        navigation.navigate('Home');
+      } else {
+        console.log('Login failed:', data.message);
+      }
+    } catch (error) {
+      console.error('Error during sign-in:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <Image style={styles.img_background} source={require('../img/building.jpg')}/>
+      <Image style={styles.img_background} source={require('../img/toanha.jpg')}/>
       <Pressable style={styles.arrowleft} 
-                 onPress={()=>navigation.navigate('Home')}
+                 onPress={()=>navigation.navigate('Welcome')}
       >
         <AntDesign name="arrowleft" size={30} color="white" />            
       </Pressable>
@@ -42,7 +51,7 @@ const SignIn= ({navigation}) => {
             <Text style={styles.text}>Email</Text>
             <TextInput style={styles.textiput} 
                 placeholder = 'Enter your email'
-                secureTextEntry={true}
+                secureTextEntry={false}
                 value={formData.email}
                 onChangeText={(text) => handleChange('email', text)}
                 />
@@ -86,7 +95,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
-    marginTop: -150
+    marginTop: -146.5
     
   },
   content_signin:{
@@ -124,12 +133,13 @@ const styles = StyleSheet.create({
   },
   btn_signin:{  
     width: 270,
-    backgroundColor: '#01BAB4',
+    backgroundColor: '#a1d2f5',
     padding: 15,
     borderRadius: 5,
     marginTop: 20,
-
   },
+
+
   text_btn_signin:{
     color: '#fff',
     fontWeight: 'bold',
@@ -143,12 +153,12 @@ const styles = StyleSheet.create({
   },
   text_question:{
     fontSize: 16,
-    color: '#01BAB4'
+    color: 'blue'
   },
   text_link_question:{
     marginLeft: 5,
     fontWeight: 'bold',
-    color: '#01BAB4',
+    color: 'blue',
     marginTop: 2
   },
 
