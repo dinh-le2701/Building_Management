@@ -22,6 +22,12 @@ const Home= ({ navigation, route }) => {
 
           - 
        */}
+       <Pressable>
+        <View>
+          <Image/>
+        </View>
+        <Text>Hóa đơn</Text>       
+       </Pressable>
       </View>
 
       <View style={styles.footer}>
@@ -141,4 +147,3 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
-

@@ -11,7 +11,14 @@ const Account= ({ navigation,route }) => {
       <View style={styles.header}>
         <Text style={styles.text_header}>Tài khoản</Text>
       </View>
-
+      <View style={styles.content}>
+        <Text>Tên chủ hộ: </Text>
+        <Text>Tên căn hộ: </Text>
+        <Text>Số điện thoại</Text>
+        <Text>Diện tích: </Text>
+        <Text>Số phòng: </Text>     
+        <Text>Số xe</Text>
+      </View>
       <View style={styles.footer}>
         <Pressable style={styles.content_footer1}
           onPress={()=>navigation.navigate('Home')}>
