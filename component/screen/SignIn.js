@@ -13,12 +13,17 @@ const SignIn= ({navigation}) => {
       ...formData,
       [name]: value
     });
+    
   };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
+    if (!formData.email || !formData.password) {
+      console.log('Email và mật khẩu không được để trống');
+      return;
+    }
     try {
-      const response = await fetch('http://localhost:1999/auth/signin', {
+      const response = await fetch('http://localhost:8901/api/auth/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -26,7 +31,7 @@ const SignIn= ({navigation}) => {
         body: JSON.stringify(formData)
       });
       const data = await response.json();
-
+  
       if (data.success) {
         navigation.navigate('Home');
       } else {
@@ -36,16 +41,10 @@ const SignIn= ({navigation}) => {
       console.error('Error during sign-in:', error);
     }
   };
-
+  
   return (
     <View style={styles.container}>
-      <Image style={styles.img_background} source={require('../img/toanha.jpg')}/>
-      <Pressable style={styles.arrowleft} 
-                 onPress={()=>navigation.navigate('Welcome')}
-      >
-        <AntDesign name="arrowleft" size={30} color="white" />            
-      </Pressable>
-      
+      <Image style={styles.img_background} source={require('../img/toanha.jpg')}/>      
       <View style={styles.content_signin}>
           <View style={styles.user} onSubmit={handleSignIn}>
             <Text style={styles.text}>Email</Text>
@@ -66,17 +65,9 @@ const SignIn= ({navigation}) => {
                         onChangeText={(text) => handleChange('password', text)}
                     />
           </View>
-        <Pressable style={styles.btn_signin} onPress={handleSignIn}>
+        <Pressable style={styles.btn_signin} onPress={()=>navigation.navigate('Home')}>
           <Text style={styles.text_btn_signin}>Sign In</Text>
         </Pressable>
-
-        <View style={styles.question}>
-            <Text style={styles.text_question}>Don't have an account?</Text>
-            <Pressable style={styles.link_question} onPress={() => navigation.navigate('SignUp')}>
-              <Text style={styles.text_link_question}>Sign Up</Text>
-            </Pressable>
-    
-        </View>
       </View>
       
     </View>

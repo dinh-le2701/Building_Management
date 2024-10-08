@@ -11,19 +11,19 @@ const Notification= ({ navigation,route }) => {
   const notifications = [
     {
       id: '1',
-      title: 'Bạn có hóa đơn tiền điện tháng 10/2024',
-      dduration: 'Hạn đóng 5 ngày',
+      title: 'Bạn có hóa đơn tháng 10/2024',
+      duration: 'Hạn đóng 5 ngày',
       icon: require('../img/toanha.jpg'),
-      price: '1.250.000đ',
+      price: '5.862.340VNĐ',
       status: 'Chưa thanh toán',
     },
     {
       id: '2',
-      title: 'Bạn có hóa đơn tiền nước tháng 10/2024',
+      title: 'Bạn có hóa đơn tháng 9/2024',
       duration: 'Hạn đóng 5 ngày',
       icon: require('../img/toanha.jpg'),
-      price: '350.000đ', 
-      status: 'Chưa thanh toán',
+      price: '5.862.340VNĐ', 
+      status: 'Đã thanh toán',
     },
   
   ];
@@ -36,6 +36,7 @@ const Notification= ({ navigation,route }) => {
         <Text style={styles.duration}>{item.duration}</Text>
         <Text style={styles.price}>{item.price}</Text>
         <Text style={styles.status}>{item.status}</Text>
+        
         {/* <Pressable style={styles.payment} onPress={()=> navigation.navigate('Payment')}>
           <Text style={styles.payment_text}>Thanh toán</Text>
         </Pressable> */}
@@ -49,7 +50,7 @@ const Notification= ({ navigation,route }) => {
         <Text style={styles.text_header}>Thông báo</Text>
       </View>
     <View style={styles.content} >
-      <Pressable onPress={()=>navigation.navigate('InvoiceDetails')}>
+      <Pressable onPress={()=>navigation.navigate('Invoice')}>
         <FlatList
         data={notifications}
         keyExtractor={(item) => item.id}
@@ -118,13 +119,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     width: '100%',
   },
+  borderwidth:{
+    width: '100%',
+    height: 1,
+    backgroundColor: 'black',
+  },
 
   notificationContainer: {
     flexDirection: 'row',
     padding: 10,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f0f0',
     marginBottom: 10,
-    borderRadius: 10,
+  },
+  listContainer:{
+    
   },
   icon: {
     width: 50,
