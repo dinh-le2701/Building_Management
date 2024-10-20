@@ -2,6 +2,7 @@ package com.microservice.apartment_service.service;
 
 import com.microservice.apartment_service.dto.ApartmentResponse;
 import com.microservice.apartment_service.model.Apartment;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.List;
 public interface ApartmentService {
 
     ApartmentResponse getAllApartments();
+
+    Page<Apartment> getAllStaffs(int page, int size);
 
     Apartment getApartmentById(Integer apartment_id);
 

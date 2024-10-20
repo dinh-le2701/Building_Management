@@ -5,6 +5,9 @@ import com.microservice.apartment_service.model.Apartment;
 import com.microservice.apartment_service.repository.ApartmentRepository;
 import com.microservice.apartment_service.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +22,12 @@ public class ApartmentServiceImpl implements ApartmentService {
         List<Apartment> apartments = apartmentRepository.findAll();
         int total = apartments.size();
         return new ApartmentResponse(apartments, total);
+    }
+
+    @Override
+    public Page<Apartment> getAllStaffs(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return apartmentRepository.findAll(pageable);
     }
 
     @Override

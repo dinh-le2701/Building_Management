@@ -45,7 +45,8 @@ public class Resident {
     private String cccd;
 
     @Column(name = "birthday")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Ho_Chi_Minh")
+    @Temporal(TemporalType.DATE)
     private LocalDate birthday;
 
     @Column(name = "move_in_date")
@@ -58,7 +59,7 @@ public class Resident {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd' 'HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
     private Timestamp move_out_date = null;
 
-    @OneToMany(mappedBy = "resident", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private List<Vehicle> vehicles;
+//    @OneToMany(mappedBy = "resident", cascade = CascadeType.ALL)
+//    @JsonManagedReference
+//    private List<Vehicle> vehicles;
 }

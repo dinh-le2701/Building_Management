@@ -13,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -57,24 +60,30 @@ public class ResidentController {
             resident.setResident_name(residentRequest.getResident_name());
             resident.setPhone_number(residentRequest.getPhone_number());
             resident.setEmail(residentRequest.getEmail());
+
+            // Chuyển đổi birthday từ String thành LocalDate
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+//            LocalDate birthday = LocalDate.parse(residentRequest.getBirthday(), formatter);
             resident.setBirthday(residentRequest.getBirthday());
 
             List<Vehicle> vehicles = residentRequest.getVehicles();
 
             // Check for null or empty vehicle list
-            if (vehicles != null && !vehicles.isEmpty()) {
-                resident.setVehicles(vehicles);  // Set vehicles in the resident if available
-            }
+//            if (vehicles != null && !vehicles.isEmpty()) {
+//                resident.setVehicles(vehicles);
+//            }
 
             // Save resident and vehicles
             Resident savedResident = residentService.addResidentWithVehicles(resident, vehicles);
             log.info("Resident '{}' and Vehicles added successfully", resident.getResident_name());
+            System.out.println(savedResident);
 
             // Return the created resident with HTTP 201 status
             return new ResponseEntity<>(savedResident, HttpStatus.CREATED);
-        } catch (Exception e) {
+        } catch (DateTimeException e) {
             log.warn("Tạo mới không thành công, vui lòng thử lại! " + e);
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            System.out.println(residentRequest);
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
         }
     }
 

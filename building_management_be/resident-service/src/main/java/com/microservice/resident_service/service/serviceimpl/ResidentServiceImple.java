@@ -42,10 +42,8 @@ public class ResidentServiceImple implements ResidentService  {
             }
         }
 
-        resident.setVehicles(vehicles);  // Set vehicles in the resident
-        Resident savedResident = residentRepository.save(resident);  // Save the resident and cascade save vehicles
-
-        return savedResident;  // Return the saved resident
+        //resident.setVehicles(vehicles);  // Set vehicles in the resident
+        return residentRepository.save(resident);  // Return the saved resident
     }
 
     @Override

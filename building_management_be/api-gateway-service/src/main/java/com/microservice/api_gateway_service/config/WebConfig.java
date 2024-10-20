@@ -1,13 +1,13 @@
-package com.microservice.apartment_service.config;
+package com.microservice.api_gateway_service.config;
 
 import org.springframework.context.annotation.Configuration;
-
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+
 @Configuration
-public class Webconfig implements WebMvcConfigurer {
-    @Override
+public class WebConfig implements WebMvcConfigurer {
+
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // Cho phép tất cả các URL
                 .allowedOrigins("http://localhost:3000", "https://center-building.vercel.app/") // Cho phép từ localhost:3000 (React)

@@ -3,7 +3,9 @@ package com.microservice.apartment_service.controller;
 import com.microservice.apartment_service.dto.ApartmentResponse;
 import com.microservice.apartment_service.model.Apartment;
 import com.microservice.apartment_service.service.ApartmentService;
+import org.hibernate.tool.schema.spi.SqlScriptException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/apartments")
+@RequestMapping("/api/v1/apartment")
 @Slf4j
 public class ApartmentController {
 
@@ -19,11 +21,16 @@ public class ApartmentController {
     private ApartmentService apartmentService;
 
     @GetMapping("")
-    public ResponseEntity<ApartmentResponse> getApartments() {
+    public ResponseEntity<Page<Apartment>> getAllStaff(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "id") String sort
+    ){
         try {
-            ApartmentResponse response = apartmentService.getAllApartments();
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
+            Page<Apartment> staffs = apartmentService.getAllStaffs(page, size);
+            return new ResponseEntity<>(staffs, HttpStatus.OK);
+        } catch (SqlScriptException e){
+            log.warn(String.valueOf(e));
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
