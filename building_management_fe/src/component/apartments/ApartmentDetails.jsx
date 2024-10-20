@@ -27,7 +27,7 @@ const ApartmentDetails = () => {
 
     const fetchApartmentDetails = async () => {
         try {
-            const response = await fetchURL(`/api/apartments/${id}`);
+            const response = await fetchURL(`http://localhost:8909/api/v1/apartment/${id}`);
             setApartments(response.data);
             console.log(response.data)
         } catch (err) {
@@ -60,8 +60,8 @@ const ApartmentDetails = () => {
 
             <div className='info bg-white m-3 p-3'>
                 <h4 className='text-center'>Thông tin căn hộ</h4>
-                <div>
-                    <Table hover responsive>
+                <div className='container w-50'>
+                    <Table className='w-75' hover responsive>
                         <tbody>
                             <tr>
                                 <th>Tên Căn Hộ: </th>

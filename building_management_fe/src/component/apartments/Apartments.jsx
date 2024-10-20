@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Form, Modal, Container } from 'react-bootstrap';
+import { Button, Table, Form, Modal, Container, Pagination } from 'react-bootstrap';
 import AxiosInstance from '../../api/AxiosInstance';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { FaEye } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import { CiTrash } from "react-icons/ci";
+import './Apartment.css'
 
 
 const Apartments = () => {
     const [show, setShow] = useState(false);
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
-
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [size, setSize] = useState(5); // Số mục trên mỗi trang, mặc định là 5
     const [apartments, setApartments] = useState([]);
     const [newApartment, setNewApartment] = useState({
         apartment_name: "",
@@ -22,24 +27,43 @@ const Apartments = () => {
         create_at: new Date().toISOString().slice(0, 19).replace('T', ' '), // Tạo giá trị cho create_at,
         update_at: null
     });
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
 
-    const fetchApartments = async () => {
+    // Xử lý khi người dùng thay đổi số lượng mục hiển thị trên mỗi trang
+    const handlePageSizeChange = (event) => {
+        setSize(Number(event.target.value)); // Cập nhật pageSize
+        setCurrentPage(0); // Reset về trang đầu tiên
+    };
+
+
+    const fetchApartments = async (page, size) => {
         try {
-            const response = await AxiosInstance.get('/api/apartments'); // Thay thế 'API_ENDPOINT' bằng URL API thực tế
-            setApartments(response.data.apartments); // Đặt danh sách căn hộ
-            console.log(response.data.apartments)
+            const response = await fetch(`http://localhost:8909/api/v1/apartment?page=${page}&size=${size}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch staff data');
+            }
+            const data = await response.json();
+            setApartments(data.content); // Giả sử dữ liệu được trả về trong `data.content`
+            setTotalPages(data.totalPages); // Giả sử dữ liệu tổng số trang là `data.totalPages`
+            console.log(data);
         } catch (error) {
-            console.error("Error fetching the apartments", error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
         }
     };
     useEffect(() => {
-        fetchApartments();
-    }, []);
+        fetchApartments(currentPage, size);
+    }, [currentPage, size]);
 
     // create new resident api
     const createResident = async (apartmentData) => {
         try {
-            const response = await fetch('http://localhost:8909/api/apartments', {
+            const response = await fetch('http://localhost:8909/api/v1/apartment', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +108,7 @@ const Apartments = () => {
     // delete apartment by id
     const deleteApartmentById = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8909/api/apartments/${id}`, {
+            const response = await fetch(`http://localhost:8909/api/apartment/${id}`, {
                 method: 'DELETE',
             });
 
@@ -100,51 +124,15 @@ const Apartments = () => {
         }
     };
 
-    // handle get api by id and response resident object data
-    // const fetchApartmentBId = async (apartment_id) => {
-    //     try {
-    //         const response = await fetch(`http://localhost:8908/api/apartments/${apartment_id}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
-    
-    //         if (response.ok) {
-    //             // Parse the response as JSON
-    //             const data = await response.json();
-    //             console.log('Resident ID:', apartment_id);
-    //             console.log('Response Data:', data);
-                
-    //             // Handle or use the resident data (e.g., set it in state if needed)
-    //             handleResidentDetails(apartment_id);  // Assuming you're setting a single resident
-    //         } else {
-    //             // Handle failed fetch and display an error message
-    //             const errorData = await response.json();
-    //             console.error('Failed to fetch resident:', errorData.message);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching resident:', error);
-    //     }
-    // };
+
     const navigate = useNavigate(); // Hook điều hướng
     const handleResidentDetails = (apartment_id) => {
         // Navigate to the resident details page with the ID in the URL
         navigate(`/apartment/${apartment_id}`);
     };
 
-
-    const [itemsPerPage, setItemsPerPage] = useState(10);
-    const handleItemsPerPageChange = (e) => {
-        const value = e.target.value;
-        setItemsPerPage(value);
-        // Gọi lại API để lấy căn hộ với số lượng hiển thị tương ứng, nếu cần
-        fetchApartments(); // Thay đổi hàm này nếu có truyền tham số vào API
-    };
-
     return (
-        <div className='apartment'
-            style={{ height: '93vh' }}>
+        <div className='apartment'>
             <div className='header p-3 w-100 bg-white d-flex justify-content-between align-items-center'>
                 <h3 className='m-0'>Danh Sách Căn Hộ</h3>
                 <Button onClick={handleShow}>Thêm mới</Button>
@@ -154,16 +142,24 @@ const Apartments = () => {
                 <div className="func-table d-flex justify-content-between align-items-center py-3">
                     <div className="select-group">
                         Hiển thị
-                        <select name="" id="" className='mx-2'
-                            value={itemsPerPage}
-                            onChange={handleItemsPerPageChange}>
-                            <option value="{10}">10</option>
-                            <option value="{20}">20</option>
-                            <option value="{30}">30</option>
-                            <option value="{50}">50</option>
-                            <option value="{100}">100</option>
+                        <select name="" id="" className="mx-2" value={size} onChange={handlePageSizeChange}>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="50">50</option>
                         </select>
                         mục
+                    </div>
+
+                    <div className="search">
+                        <Form className='d-flex'>
+                            <Form.Group>
+                                <Form.Control />
+                            </Form.Group>
+                            <Button type='submit'>Tìm</Button>
+                        </Form>
                     </div>
                 </div>
 
@@ -185,7 +181,7 @@ const Apartments = () => {
                         {apartments.length > 0 ? (
                             apartments.map((apartment, id) => (
                                 <tr key={id}>
-                                    <td>{id + 1}</td>
+                                    <td>{(currentPage - 0) * size + id + 1}</td>
                                     <td>{apartment.apartment_name}</td>
                                     <td>{apartment.area}</td>
                                     <td>{apartment.number_of_room}</td>
@@ -214,6 +210,16 @@ const Apartments = () => {
                         )}
                     </tbody>
                 </Table>
+                <div className="mt-4 pagination d-flex justify-content-center align-items-center">
+                    <Pagination className=''>
+                        <Pagination.First onClick={() => handlePageChange(0)} />
+                        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} />
+                        <Pagination.Item>{currentPage + 1} / {totalPages}</Pagination.Item>
+                        {/* <Pagination.Item>{totalPages}</Pagination.Item> */}
+                        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+                        <Pagination.Last onClick={() => handlePageChange(totalPages - 1)} />
+                    </Pagination>
+                </div>
             </div>
 
             {/* Modal to add resident */}
@@ -287,22 +293,6 @@ const Apartments = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-
-            {/* Panigation */}
-            {/* <>
-                <Pagination className='container'>
-                    <Pagination.First />
-                    <Pagination.Prev />
-                    <Pagination.Item>{1}</Pagination.Item>
-                    <Pagination.Ellipsis />
-                    <Pagination.Item>{20}</Pagination.Item>
-                    <Pagination.Next />
-                    <Pagination.Last />
-                </Pagination>
-                <Container className='w-25 mt-5'>
-                </Container>
-            </> */}
         </div>
     )
 }

@@ -1,1 +1,20 @@
-FROM node:21-alpine
+# 1. Sử dụng image chính thức của Node.js
+FROM node:18
+
+# 2. Đặt thư mục làm việc trong container
+WORKDIR /building_management_fe
+
+# 3. Copy file package.json và package-lock.json vào container để cài đặt dependencies
+COPY package*.json ./
+
+# 4. Cài đặt các dependencies của dự án
+RUN npm install
+
+# 5. Copy toàn bộ mã nguồn vào container
+COPY . .
+
+# 6. Expose cổng 3000, cổng mặc định của React Dev Server
+EXPOSE 3000
+
+# 7. Cấu hình container để chạy ứng dụng ở chế độ development
+CMD ["npm", "start"]

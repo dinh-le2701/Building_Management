@@ -6,7 +6,7 @@ import { FaRegUser } from "react-icons/fa";
 import { MdApartment } from "react-icons/md";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { CiMoneyBill } from "react-icons/ci";
-import { RiCheckboxMultipleBlankLine } from "react-icons/ri";
+import { FaUsers } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
 import { MdOutlinePayment } from "react-icons/md";
 import { FaFileContract } from "react-icons/fa";
@@ -133,9 +133,9 @@ export const SideBar = () => {
                 </Nav>
 
                 <Nav className="btn-click me-auto mb-3">
-                    <Nav.Link className='form-control d-flex align-items-center text-dark' href="/blank">
-                        <RiCheckboxMultipleBlankLine className='me-3' />
-                        <span>Blank Page</span>
+                    <Nav.Link className='form-control d-flex align-items-center text-dark' href="/staff">
+                        <FaUsers className='me-3' />
+                        <span>Nhân Viên</span>
                     </Nav.Link>
                 </Nav>
 

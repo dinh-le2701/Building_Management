@@ -13,57 +13,74 @@ const Resident = () => {
     const [residents, setResidents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [size, setSize] = useState(5); // Số mục trên mỗi trang, mặc định là 10
     const [newResident, setNewResident] = useState({
         resident_name: "",
-        email: "",
         phone_number: "",
+        email: "",
         birthday: "",
         move_in_date: "",
-        vehicles: [{
-            vehicle_name: "",
-            license_plate: "",
-            vehicle_type: "",
-            color: ""
-        }]
+        vehicles: [
+            {
+                vehicle_name: "",
+                license_plate: "",
+                vehicle_type: "",
+                color: "",
+            },
+        ],
     });
+
     const [currentResidentId, setCurrentResidentId] = useState(null); // To store the resident ID for editing
 
     const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
+        // Chuyển đổi chuỗi "yyyy/MM/dd" thành "yyyy-MM-dd"
+        const [year, month, day] = dateString.split('/');
         return `${year}-${month}-${day}`;
     };
 
     useEffect(() => {
-        fetchResidents();
-    }, []);
+        fetchResidents(currentPage, size);
+    }, [currentPage, size]);
+    // Xử lý thay đổi trang
+    const handlePageChange = (newPage) => {
+        if (newPage >= 0 && newPage < totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
 
-    const fetchResidents = async () => {
+    // Xử lý khi người dùng thay đổi số lượng mục hiển thị trên mỗi trang
+    const handlePageSizeChange = (event) => {
+        setSize(Number(event.target.value)); // Cập nhật pageSize
+        setCurrentPage(0); // Reset về trang đầu tiên
+    };
+
+    const fetchResidents = async (page, size) => {
         try {
-            const response = await fetchURL('/api/residents');
-            const data = response.data.map(resident => ({
-                ...resident,
-                birthday: formatDate(resident.birthday),
-                move_in_date: formatDate(resident.move_in_date)
-            }));
-            setResidents(data);
-        } catch (err) {
-            setError(err.message);
+            const response = await fetch(`http://localhost:8908/api/v1/resident?page=${page}&size=${size}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch staff data');
+            }
+            const data = await response.json();
+            setResidents(data.content); // Giả sử dữ liệu được trả về trong `data.content`
+            setTotalPages(data.totalPages); // Giả sử dữ liệu tổng số trang là `data.totalPages`
+            console.log(data);
+        } catch (error) {
+            setError(error.message);
         } finally {
             setLoading(false);
         }
     };
+
+
 
     // Handle form submit
     const handleSubmits = (e) => {
         e.preventDefault();
         // Ensure date fields are formatted correctly before submitting
         const formattedResident = {
-            ...newResident,
-            birthday: formatDate(newResident.birthday),
-            move_in_date: formatDate(newResident.move_in_date),
+            ...newResident
         };
         handleResidentSubmit(formattedResident);
     };
@@ -112,10 +129,24 @@ const Resident = () => {
     // Handle form input change
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setNewResident((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
+
+        // Kiểm tra nếu input nằm trong phần vehicle
+        if (["vehicle_name", "license_plate", "vehicle_type", "color"].includes(name)) {
+            setNewResident((prevState) => ({
+                ...prevState,
+                vehicles: [
+                    {
+                        ...prevState.vehicles[0],  // Giữ lại thông tin cũ của vehicle
+                        [name]: value,             // Cập nhật thông tin mới cho field cụ thể
+                    },
+                ],
+            }));
+        } else {
+            setNewResident((prevState) => ({
+                ...prevState,
+                [name]: value,  // Cập nhật thông tin cho các trường khác của resident
+            }));
+        }
     };
 
     // Open modal for creating new resident
@@ -156,7 +187,7 @@ const Resident = () => {
     // handle delete api
     const deleteResidentById = async (resident_id) => {
         try {
-            const response = await fetch(`http://localhost:8908/api/residents/${resident_id}`, {
+            const response = await fetch(`http://localhost:8908/api/resident/${resident_id}`, {
                 method: 'DELETE',
             });
 
@@ -172,35 +203,6 @@ const Resident = () => {
         }
     };
 
-    // handle get api by id and response resident object data
-    // const fetchResidentBId = async (resident_id) => {
-    //     try {
-    //         const response = await fetch(`http://localhost:8908/api/residents/${resident_id}`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
-
-    //         if (response.ok) {
-    //             // Parse the response as JSON
-    //             const data = await response.json();
-    //             console.log('Resident ID:', resident_id);
-    //             console.log('Response Data:', data);
-
-    //             // Handle or use the resident data (e.g., set it in state if needed)
-    //             handleResidentDetails(resident_id);  // Assuming you're setting a single resident
-    //         } else {
-    //             // Handle failed fetch and display an error message
-    //             const errorData = await response.json();
-    //             console.error('Failed to fetch resident:', errorData.message);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching resident:', error);
-    //     }
-    // };
-
-
     const navigate = useNavigate(); // Hook điều hướng
     const handleResidentDetails = (resident_id) => {
         // Navigate to the resident details page with the ID in the URL
@@ -215,7 +217,7 @@ const Resident = () => {
 
     return (
         <div className='resident'
-            style={{ height: '92vh' }}>
+            style={{ height: '' }}>
             <div className='header p-3 w-100 bg-white d-flex justify-content-between align-items-center'>
                 <h3 className='m-0'>Danh Sách Cư Dân</h3>
             </div>
@@ -224,11 +226,12 @@ const Resident = () => {
                 <div className="func-table d-flex justify-content-between align-items-center py-3">
                     <div className="select-group">
                         Hiển thị
-                        <select name="" id="" className='mx-2'>
-                            <option value="">10</option>
-                            <option value="">20</option>
-                            <option value="">30</option>
-                            <option value="">50</option>
+                        <select name="" id="" className='mx-2' value={size} onChange={handlePageSizeChange}>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                            <option value="50">50</option>
                         </select>
                         mục
                     </div>
@@ -254,7 +257,7 @@ const Resident = () => {
                         {residents.length > 0 ? (
                             residents.map((resident, id) => (
                                 <tr key={id}>
-                                    <td>{id + 1}</td>
+                                    <td>{(currentPage - 0) * size + id + 1}</td>
                                     <td>{resident.resident_name}</td>
                                     <td>{resident.email}</td>
                                     <td>{resident.phone_number}</td>
@@ -280,6 +283,20 @@ const Resident = () => {
                         )}
                     </tbody>
                 </Table>
+                <div className="mt-3 pagination d-flex justify-content-center align-items-center">
+                <div className="mt-3 pagination d-flex justify-content-center align-items-center">
+                    <Pagination className=''>
+                        <Pagination.First onClick={() => handlePageChange(0)}/>
+                        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)}/>
+                        <Pagination.Item>{currentPage + 1} / {totalPages}</Pagination.Item>
+                        {/* <Pagination.Item>{totalPages}</Pagination.Item> */}
+                        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}/>
+                        <Pagination.Last onClick={() => handlePageChange(totalPages - 1)}/>
+                    </Pagination>
+                </div>
+
+
+                </div>
             </div>
 
             {/* Modal to add/edit resident */}
@@ -400,18 +417,6 @@ const Resident = () => {
                 </Modal.Body>
             </Modal>
 
-            {/* Pagination */}
-            <Container className='w-25'>
-                <Pagination>
-                    <Pagination.First />
-                    <Pagination.Prev />
-                    <Pagination.Item>{1}</Pagination.Item>
-                    <Pagination.Ellipsis />
-                    <Pagination.Item>{20}</Pagination.Item>
-                    <Pagination.Next />
-                    <Pagination.Last />
-                </Pagination>
-            </Container>
         </div>
     );
 };

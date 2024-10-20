@@ -21,49 +21,54 @@ const Signin = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8901/api/auth/signin', {
+      const response = await fetch('http://localhost:1999/auth/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
-
+  
       const data = await response.json();
       
       if (!response.ok) {
-        // Nếu đăng nhập thất bại, hiển thị thông báo lỗi
+        // If login fails, show error notification
         Store.addNotification({
           title: "Login Failed!",
           message: data.message || "An error occurred while trying to log in.",
-          type: "danger", // màu đỏ cho lỗi
+          type: "danger", // red color for error
           insert: "top",
           container: "top-left",
           dismiss: {
-            duration: 3000, // Tự động tắt sau 3 giây
+            duration: 3000, // Auto-dismiss after 3 seconds
             onScreen: true
           }
         });
-
-        
       } else {
-        // Đăng nhập thành công, bạn có thể chuyển hướng hoặc thực hiện các hành động khác
+        // Successful login: Save the token to localStorage
+        localStorage.setItem('token', data.token);
+        
+        // Success notification
         Store.addNotification({
-          title: "Login Failed!",
-          message: data.message || "An error occurred while trying to log in.",
-          type: "success", // màu đỏ cho lỗi
+          title: "Login Successful!",
+          message: "Welcome back!",
+          type: "success", // green color for success
           insert: "top",
           container: "top-left",
           dismiss: {
-            duration: 4000, // Tự động tắt sau 3 giây
+            duration: 4000, // Auto-dismiss after 4 seconds
             onScreen: true
           }
         });
+  
         console.log("Login successful:", data);
+        
+        // Redirect to a protected route, e.g., '/dashboard'
+        window.location.href = '/';
       }
     } catch (error) {
       console.error("Error during login:", error);
-      // Thông báo khi có lỗi mạng hoặc server
+      // Notification for network/server error
       Store.addNotification({
         title: "Error!",
         message: "Unable to connect to the server. Please try again later.",
@@ -77,6 +82,7 @@ const Signin = () => {
       });
     }
   };
+  
 
   return (
     <div className="signin">

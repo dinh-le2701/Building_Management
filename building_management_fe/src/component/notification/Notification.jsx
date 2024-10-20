@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Form } from 'react-bootstrap';
+import { Button, Table, Form, Pagination } from 'react-bootstrap';
 import 'react-notifications-component/dist/theme.css';
-import AxiosInstance from '../../api/AxiosInstance';
 
 const Notification = () => {
-
-  // get api mail apartment
-  const [apartments, setApartments] = useState([])
-
-  useEffect(() => {
-    getApartments()
-  }, [])
-
-  const getApartments = async () => {
-    try {
-        const response = await AxiosInstance.get('/api/apartments'); // Thay thế 'API_ENDPOINT' bằng URL API thực tế
-        setApartments(response.data.apartments); // Đặt danh sách căn hộ
-        console.log(response.data.apartments)
-    } catch (error) {
-        console.error("Error fetching the apartments", error);
-    }
-};
-
-
+  // send email
   const [mail, setMail] = useState([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [size, setSize] = useState(5); // Số mục trên mỗi trang, mặc định là 5
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  // Xử lý khi người dùng thay đổi số lượng mục hiển thị trên mỗi trang
+  const handlePageSizeChange = (event) => {
+    setSize(Number(event.target.value)); // Cập nhật pageSize
+    setCurrentPage(0); // Reset về trang đầu tiên
+  };
+
   const [newMail, setNewMail] = useState({
     to: "",
     subject: "",
@@ -42,7 +41,9 @@ const Notification = () => {
     e.preventDefault();
     sendEmail(newMail);
   };
-
+  const nullMail = () => {
+    setMail = ""
+  }
   const sendEmail = async (emailData) => {
     try {
       // Chuyển đổi đối tượng emailData thành chuỗi x-www-form-urlencoded
@@ -68,16 +69,19 @@ const Notification = () => {
           subject: "",
           text: ""
         });
+        nullMail();
       } else {
         console.error('Failed to send email:', data.message);
+        nullMail();
       }
     } catch (error) {
       console.error('Error:', error);
+      nullMail();
     }
   };
 
   return (
-    <div className='notifications' style={{ height: '92vh' }}>
+    <div className='notifications'>
       <div className='header p-3 w-100 bg-white d-flex justify-content-between align-items-center'>
         <h3 className='m-0'>Thông Báo</h3>
       </div>
@@ -133,46 +137,51 @@ const Notification = () => {
         <div className="func-table d-flex justify-content-between align-items-center py-3">
           <div className="select-group">
             Hiển thị
-            <select name="" id="" className='mx-2'>
-              <option value="">10</option>
-              <option value="">20</option>
-              <option value="">30</option>
-              <option value="">50</option>
+            <select name="" id="" className="mx-2" value={size} onChange={handlePageSizeChange}>
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
             </select>
             mục
           </div>
         </div>
 
-        <Table striped hover bordered className='m-0 w-100'>
+        <Table striped hover bordered className='m-0 w-100 text-center'>
           <thead>
             <tr>
               <th>Chọn</th>
-              <th>Tên Thông Báo</th>
-              <th>Ngày Gửi</th>
-              <th>Người Gửi</th>
+              <th>Tên Căn Hộ</th>
+              <th>Tài Khoản</th>
               <th>Trạng Thái</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {mail.length > 0 ? (
-              mail.map((item, index) => (
-                <tr key={index}>
-                  <td>
-                    <Form.Check />
-                  </td>
-                  <td>{item.subject}</td>
-                  <td>{new Date(item.sentAt).toLocaleDateString()}</td>
-                  <td>{item.to}</td>
-                  <td>Đã gửi</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="text-center">Chưa có thông báo nào</td>
-              </tr>
-            )}
+
+            <tr >
+              <td>
+                <Form.Check />
+              </td>
+              <td>1</td>
+              <td>2</td>
+              <td>Đã gửi</td>
+              <td></td>
+            </tr>
           </tbody>
         </Table>
+        <div className="mt-3 pagination d-flex justify-content-center align-items-center">
+                    <Pagination className=''>
+                        <Pagination.First onClick={() => handlePageChange(0)} />
+                        <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} />
+                        <Pagination.Item>{currentPage + 1} / {totalPages}</Pagination.Item>
+                        {/* <Pagination.Item>{totalPages}</Pagination.Item> */}
+                        <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+                        <Pagination.Last onClick={() => handlePageChange(totalPages - 1)} />
+                    </Pagination>
+                </div>
       </div>
     </div>
   );

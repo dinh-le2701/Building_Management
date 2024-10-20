@@ -17,6 +17,7 @@ import Signup from '../Form/Signup.jsx'
 import ApartmentDetails from '../../component/apartments/ApartmentDetails.jsx'
 import ResidentDetails from '../../component/resident/ResidentDetails.jsx'
 import Payment from '../../component/payment/Payment.jsx'
+import Staff from '../../component/staff/Staff.jsx'
 
 const Admin = () => {
     return (
@@ -47,6 +48,8 @@ const Admin = () => {
                             <Route path='/notification' element={<Notification />} />
                             <Route path='/profile' element={<Profile />} />
                             <Route path='/payment' element={<Payment/>} />
+
+                            <Route path='/staff' element={<Staff/>}/>
                         </Routes>
                     </BrowserRouter>
                 </Col>

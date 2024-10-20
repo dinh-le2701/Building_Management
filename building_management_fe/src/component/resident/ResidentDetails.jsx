@@ -14,11 +14,12 @@ const ResidentDetails = () => {
 
   const fetchResidentDetails = async () => {
     try {
-      const response = await fetchURL(`/api/residents/${id}`);
+      const response = await fetchURL(`/api/v1/resident/${id}`);
       setResident(response.data);
       console.log(response.data)
     } catch (err) {
       console.error(err.message);
+      console.log(resident)
     }
   };
 
@@ -64,38 +65,32 @@ const ResidentDetails = () => {
                     Ngày Đăng Ký Nhận Phòng:</th>
                   <td>{resident.move_in_date}</td>
                 </tr>
-
               </tbody>
 
-              {resident.vehicles.map((vehicle) => (
-                <tbody >
-                  <tr key={vehicle.vehicle_id}></tr>
-                  <tr>
-                    <th>Loại Phương Tiện</th>
-                    <td>{vehicle.vehicle_type}</td>
-                  </tr>
-                  <tr>
-                    <th>Tên Phương Tiện</th>
+            </Table>
+            <h4 className='text-center'>Thông Tin Phương Tiện Cá Nhân</h4>
+            <Table>
+              <thead>
+                <tr>
+                  <th>STT</th>
+                  <th>Tên Phương Tiện</th>
+                  <th>Loại Phương Tiện</th>
+                  <th>Biển Số</th>
+                  <th>Màu Sắc</th>
+                </tr>
+              </thead>
+              {resident.vehicles.map((vehicle, id) => (
+                <tbody className='mt-5'>
+                  <tr key={id}>
+                    <td>{id + 1}</td>
                     <td>{vehicle.vehicle_name}</td>
-                  </tr>
-                  <tr>
-                    <th>Biển Số Xe</th>
+                    <td>{vehicle.vehicle_type}</td>
                     <td>{vehicle.license_plate}</td>
-                  </tr>
-                  <tr>
-                    <th>Màu Sắc</th>
                     <td>{vehicle.color}</td>
                   </tr>
                 </tbody>
               ))}
             </Table>
-            {/* {resident.vehicles && resident.vehicles.length > 0 ? (
-              <Table hover responsive>
-
-              </Table>
-            ) : (
-              <p>Không có phương tiện nào được đăng ký.</p>
-            )} */}
           </Container>
         </div>
 

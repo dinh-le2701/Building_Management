@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Form, Modal } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import fetchURL from '../../api/AxiosInstance';
 import { Link } from 'react-router-dom'
 
 const Vehicle = () => {
-    const [show, setShow] = useState(false);
-    const handleShow = () => setShow(true);
-    const handleClose = () => setShow(false);
 
     const [residents, setResidents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -21,11 +18,12 @@ const Vehicle = () => {
     useEffect(() => {
         // Fetch resident data from your API
         fetchResident();
+        console.log(residents + "hi")
     }, []);
 
     const fetchResident = async () => {
         try {
-            const response = await fetchURL('/api/residents'); // Using fetchAPI with endpoint
+            const response = await fetchURL('http://localhost:8908/api/v1/resident?page=0&size=10'); // Using fetchAPI with endpoint
             setResidents(response.data);
             console.log(response.data);
         } catch (err) {
@@ -37,7 +35,7 @@ const Vehicle = () => {
 
     return (
         <div className='vehicle'
-            style={{ height: '92vh'}}>
+            style={{ height: '92vh' }}>
             <div className='header p-3 w-100 bg-white d-flex justify-content-between align-items-center'>
                 <h3 className='m-0'>Danh Sách Phương Tiện</h3>
                 <Link className='pe-3' to={"/resident"}>
@@ -59,7 +57,7 @@ const Vehicle = () => {
                     </div>
                 </div>
 
-                <Table hover striped bordered className='w-100 m-0 text-center'>
+                <Table hover striped className='w-100 m-0 text-center'>
                     <thead>
                         <tr>
                             <th>STT</th>
@@ -73,7 +71,7 @@ const Vehicle = () => {
                     <tbody>
                         {residents.length > 0 ? (
                             residents.map((resident, residentIndex) => (
-                                resident.vehicles.map((vehicle, vehicleIndex) => (
+                                residents.vehicles.map((vehicle, vehicleIndex) => (
                                     <tr key={vehicle.vehicle_id}>
                                         <td>{residentIndex + 1}</td>
                                         <td>{vehicle.vehicle_name}</td>
@@ -86,7 +84,7 @@ const Vehicle = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="8" className="text-center">No resident data available</td>
+                                <td colSpan="6" className="text-center">Không có dữ liệu phương tiện</td>
                             </tr>
                         )}
                     </tbody>
