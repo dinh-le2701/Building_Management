@@ -23,8 +23,10 @@ const Vehicle = () => {
 
     const fetchResident = async () => {
         try {
-            const response = await fetchURL('http://localhost:8908/api/v1/resident?page=0&size=10'); // Using fetchAPI with endpoint
-            setResidents(response.data);
+            const response = await fetchURL('http://localhost:8908/api/v1/resident');
+            const data = await response.json();
+            setResidents(data.content); // Lưu dữ liệu residents vào state
+            setLoading(false);
             console.log(response.data);
         } catch (err) {
             setError(err.message);

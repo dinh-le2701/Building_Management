@@ -1,8 +1,16 @@
-.sidebar{
-    min-height: 100%;
+.sidebar {
+    height: 100% ;
     background: #fff;
     min-width: 100%;
 }
-.btn-click{
+
+.sidebar-content {
+    height: 100vh + min-content;
+    position: sticky;
+    top: 0;
+    height: 100vh + max-content;
+}
+
+.btn-click {
     transition: ease-in 0.5s;
 }

@@ -18,11 +18,12 @@ import ApartmentDetails from '../../component/apartments/ApartmentDetails.jsx'
 import ResidentDetails from '../../component/resident/ResidentDetails.jsx'
 import Payment from '../../component/payment/Payment.jsx'
 import Staff from '../../component/staff/Staff.jsx'
+import StaffDetail from '../../component/staff/StaffDetail.jsx'
 
 const Admin = () => {
     return (
         <div className='admin'>
-            <Row className='w-100 no-gutters'>
+            <Row className='w-100'>
                 {/* Cột sidebar */}
                 <Col xs={12} lg={2} className='p-0 sidebar-col'>
                     <SideBar />
@@ -50,6 +51,7 @@ const Admin = () => {
                             <Route path='/payment' element={<Payment/>} />
 
                             <Route path='/staff' element={<Staff/>}/>
+                                <Route path='/staff/:id' element={<StaffDetail/>}/>
                         </Routes>
                     </BrowserRouter>
                 </Col>

@@ -73,7 +73,23 @@ const Resident = () => {
         }
     };
 
-
+    const loadResidents = async (page, size) => {
+        try {
+            const response = await fetch(`http://localhost:8908/api/v1/resident`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch staff data');
+            }
+            const data = await response.json();
+            setResidents(data.content); // Giả sử dữ liệu được trả về trong `data.content`
+            setTotalPages(data.totalPages); 
+            
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Handle form submit
     const handleSubmits = (e) => {
@@ -187,13 +203,13 @@ const Resident = () => {
     // handle delete api
     const deleteResidentById = async (resident_id) => {
         try {
-            const response = await fetch(`http://localhost:8908/api/resident/${resident_id}`, {
+            const response = await fetch(`http://localhost:8908/api/v1/resident/${resident_id}`, {
                 method: 'DELETE',
             });
 
             if (response.ok) {
                 console.log('Resident has id:' + resident_id + ' deleted successfully');
-                fetchResidents(); // Cập nhật lại danh sách căn hộ sau khi xóa
+                fetchResidents(currentPage, size)
             } else {
                 const errorData = await response.json();
                 console.error('Failed to delete resident:', errorData.message);

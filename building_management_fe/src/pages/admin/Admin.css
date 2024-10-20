@@ -5,6 +5,7 @@
 .admin {
     display: flex;
     flex-direction: column;
+    height: fit;
 }
 
 @media (max-width: 768px) {

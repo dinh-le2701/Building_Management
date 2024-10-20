@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Container, Pagination } from 'react-bootstrap';
+import { Table, Button, Modal, Pagination, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { FaEye } from "react-icons/fa";
 import { CiEdit } from "react-icons/ci";
 import { CiTrash } from "react-icons/ci";
+import { MdDateRange } from "react-icons/md";
+
 
 const Staff = () => {
     const [staffs, setStaffs] = useState([]);
@@ -11,12 +13,80 @@ const Staff = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
-    const [size, setSize] = useState(7); // Số mục trên mỗi trang, mặc định là 10
+    const [size, setSize] = useState(5); // Số mục trên mỗi trang, mặc định là 10
+
+    // state for modal
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShowAdd = () => {
+
+        setShow(true);
+    };
+
+    // new staff
+    const [newStaff, setNewStaff] = useState({})
+    const handleSubmits = (e) => {
+        e.preventDefault();
+        // Ensure date fields are formatted correctly before submitting
+        const formattedResident = {
+            ...newStaff
+        };
+        handleResidentSubmit(formattedResident);
+    };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setNewStaff(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+    const handleResidentSubmit = async (apartmentData) => {
+        try {
+            const response = await fetch('http://localhost:8907/api/v1/staff', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(apartmentData),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Resident created successfully', data);
+                setStaffs([...staffs, data]); // Add the new resident to the list
+                handleClose(); // Close the modal after successful creation
+                getStaffs();
+            } else {
+                console.error('Failed to create resident:', data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    };
+
+
 
     // Hàm gọi API với phân trang
     const getAllStaff = async (page, size) => {
         try {
             const response = await fetch(`http://localhost:8907/api/v1/staff?page=${page}&size=${size}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch staff data');
+            }
+            const data = await response.json();
+            setStaffs(data.content); // Giả sử dữ liệu được trả về trong `data.content`
+            setTotalPages(data.totalPages); // Giả sử dữ liệu tổng số trang là `data.totalPages`
+            console.log(data);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getStaffs = async (page, size) => {
+        try {
+            const response = await fetch(`http://localhost:8907/api/v1/staff`);
             if (!response.ok) {
                 throw new Error('Failed to fetch staff data');
             }
@@ -55,11 +125,29 @@ const Staff = () => {
         navigate(`/staff/${staff_id}`);
     };
 
+    const deleteStaffById = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8907/api/v1/staff/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                console.log('Staff deleted successfully');
+                getAllStaff(currentPage, size); // Cập nhật lại danh sách căn hộ sau khi xóa
+            } else {
+                const errorData = await response.json();
+                console.error('Failed to delete staff:', errorData.message);
+            }
+        } catch (error) {
+            console.error('Error deleting staff:', error);
+        }
+    }
+
     return (
         <div className='staff'>
             <div className='header p-3 w-100 bg-white d-flex justify-content-between align-items-center'>
                 <h3 className='m-0'>Danh Sách Nhân Viên</h3>
-                <Button className='me-3'>Thêm mới</Button>
+                <Button className='me-3' onClick={handleShowAdd}>Thêm mới</Button>
             </div>
 
             <div className="table-content bg-white m-3 p-3">
@@ -117,14 +205,17 @@ const Staff = () => {
                                             />
                                         </Button>
                                         <Button variant="warning"
-                                            //onClick={() => updateApartmentById(apartment.apartment_id)}
+                                        //onClick={() => updateApartmentById(apartment.apartment_id)}
                                         >
                                             <CiEdit className='pb-1' />
                                         </Button>
                                         <Button variant="danger"
-                                            //onClick={() => deleteApartmentById(apartment.apartment_id)}
+                                            onClick={() => deleteStaffById(staff.staff_id)}
                                         >
                                             <CiTrash className='pb-1' />
+                                        </Button>
+                                        <Button>
+                                            <MdDateRange />
                                         </Button>
                                     </td>
                                 </tr>
@@ -147,6 +238,98 @@ const Staff = () => {
                     </Pagination>
                 </div>
             </div>
+            {/* Modal to add/edit resident */}
+            <Modal size="lg" aria-labelledby="contained-modal-title-vcenter" centered show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    {/* // isEditing ? "Sửa cư dân" :  */}
+                    <Modal.Title>{"Thêm mới nhân viên"}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form
+                        onSubmit={handleSubmits}
+                    >
+                        <Form.Group className="mb-3">
+                            <Form.Label>Tên Nhân Viên</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name='staff_name'
+                                value={newStaff.staff_name}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Hình Ảnh</Form.Label>
+                            <Form.Control type='file'/>
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Vị Trí Làm Việc</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name='staff_position'
+                                value={newStaff.staff_position}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Số Điện Thoại</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name='phone'
+                                value={newStaff.phone}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                                type="email"
+                                name='email'
+                                value={newStaff.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Ngày Sinh</Form.Label>
+                            <Form.Control
+                                type="date"
+                                name='birthday'
+                                value={newStaff.birthday}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Số Giờ Làm Việc</Form.Label>
+                            <Form.Control
+                                type="number"
+                                name='work_time'
+                                value={newStaff.work_time}
+                                onChange={handleChange}
+                                required
+                            />
+                        </Form.Group>
+
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleClose}>
+                                Đóng
+                            </Button>
+                            <Button variant="success" type="submit"> Lưu
+                                {/* {isEditing ? "Cập nhật" : "Lưu"} */}
+                            </Button>
+                        </Modal.Footer>
+                    </Form>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 };
