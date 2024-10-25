@@ -1,32 +1,15 @@
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Pressable, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Pressable, Image } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Octicons from '@expo/vector-icons/Octicons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Home = ({ navigation, route }) => {
-  const items = [
-    { id: '1', name: 'Hóa đơn', icon: 'file-invoice-dollar', img: require('../img/invoice.jpg')},
-    { id: '2', name: 'Hợp đồng', icon: 'file-invoice-dollar',img: require('../img/hopdong.png')},
-    { id: '3', name: 'Báo cáo', icon: 'file-invoice-dollar', img: require('../img/report.png')},
-    { id: '4', name: 'Nội quy', icon: 'file-invoice-dollar', img: require('../img/noiquy.png')},
-  ];
-
-  const HomeItem = ({ item }) => (
-    <View style={styles.homeItemContainer}>
-      <Pressable onPress={()=>navigation.navigate('Invoice')}>
-         <View style={styles.iconCircle}>
-          {/* <Image style={styles.avatar2}>{item.img}</Image> */}
-          {/* <FontAwesome6 name={item.icon} size={24} color="black" /> */}
-        </View>
-        <Text style={styles.homeItemText}>{item.name}</Text>
-      </Pressable>
-     
-    </View>
-  );
-
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -35,9 +18,8 @@ const Home = ({ navigation, route }) => {
           <Image source={require('../img/avatar.png')} style={styles.avatar}/>
         </View>
         <View style={styles.headerText}>
-          <Text style={styles.headerTitle}>Nguyễn Văn A</Text>
-          <Text style={styles.headerSubtitle}></Text>
-          <Text style={styles.headerAddress}></Text>
+          <Text style={styles.headerTitle}>Xin chào</Text>
+          <Text style={styles.headerTitle}>Nguyễn Hoài Minh</Text>
         </View>
         <Image source={require('../img/lo-go.png')} style={styles.logo}/>
       </View>
@@ -45,31 +27,49 @@ const Home = ({ navigation, route }) => {
       <ScrollView style={styles.content}>
         {/* Shortcut Icons */}
         <View style={styles.shortcutContainer}>
-          <FlatList
-            data={items}
-            numColumns={5}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <HomeItem item={item} />}
-          />
+          <Pressable style={styles.homeItemContainer} onPress={() => navigation.navigate('Invoice')}>
+            <View style={styles.iconCircle1}>
+              <FontAwesome5 name="file-invoice-dollar" size={24} color="white" />
+            </View>
+            <Text style={styles.homeItemText}>Hóa đơn</Text>
+          </Pressable>
+
+          <Pressable style={styles.homeItemContainer} onPress={() => navigation.navigate('Contract')}>
+            <View style={styles.iconCircle2}>
+              <FontAwesome6 name="file-contract" size={24} color="white" />
+            </View>
+            <Text style={styles.homeItemText}>Hợp đồng</Text>
+          </Pressable>
+
+          <Pressable style={styles.homeItemContainer} onPress={() => navigation.navigate('Report')}>
+            <View style={styles.iconCircle3}>
+              <Octicons name="report" size={24} color="white" />
+            </View>
+            <Text style={styles.homeItemText}>Báo cáo</Text>
+          </Pressable>
+
+          <Pressable style={styles.homeItemContainer} onPress={() => navigation.navigate('Rules')}>
+            <View style={styles.iconCircle4}>
+            <AntDesign name="exception1" size={24} color="white" />
+            </View>
+            <Text style={styles.homeItemText}>Nội quy</Text>
+          </Pressable>
         </View>
 
         {/* Notifications */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Thông báo mới</Text>
-            <Pressable onPress={()=>navigation.navigate('Notification')}>
+            <Pressable onPress={() => navigation.navigate('Notification')}>
               <Text style={styles.sectionLink}>Xem tất cả</Text>
             </Pressable>
-            
           </View>
           <View style={styles.notificationContainer}>
             <View style={styles.notificationIconContainer}>
               <MaterialIcons name="warning" size={24} color="red" />
             </View>
             <View style={styles.notificationTextContainer}>
-              <Text style={styles.notificationText}>
-                Thông báo hóa đơn tháng 10/2024
-              </Text>
+              <Text style={styles.notificationText}>Thông báo hóa đơn tháng 10/2024</Text>
               <Text style={styles.notificationDate}>5.862.340 VNĐ</Text>
               <Text style={styles.notificationDate}>1 ngày trước</Text>
             </View>
@@ -79,11 +79,10 @@ const Home = ({ navigation, route }) => {
         {/* Management Requests */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Báo cáo sự cố</Text>
-            <Pressable onPress={()=>navigation.navigate('Report')}>
+            <Text style={styles.sectionTitle}>Các báo cáo</Text>
+            <Pressable onPress={() => navigation.navigate('Report')}>
               <Text style={styles.sectionLink}>Xem tất cả</Text>
             </Pressable>
-            
           </View>
           <View style={styles.requestContainer}>
             <View style={[styles.requestItem, { backgroundColor: '#dff3f5' }]}>
@@ -106,7 +105,7 @@ const Home = ({ navigation, route }) => {
       <View style={styles.footer}>
         <Pressable style={styles.footerItem} onPress={() => navigation.navigate('Home')}>
           <Entypo name="home" size={24} color="#004d8d" />
-          <Text style={styles.footerText}>Trang chủ</Text>
+          <Text style={styles.footerText1}>Trang chủ</Text>
         </Pressable>
         <Pressable style={styles.footerItem} onPress={() => navigation.navigate('Payment')}>
           <MaterialIcons name="payment" size={24} color="black" />
@@ -116,7 +115,7 @@ const Home = ({ navigation, route }) => {
           <Ionicons name="notifications" size={24} color="black" />
           <Text style={styles.footerText}>Thông báo</Text>
         </Pressable>
-        <Pressable style={styles.footerItem} onPress={() => navigation.navigate('Account')}>
+        <Pressable style={styles.footerItem} onPress={() => navigation.navigate('Acount')}>
           <MaterialCommunityIcons name="account" size={24} color="black" />
           <Text style={styles.footerText}>Tài khoản</Text>
         </Pressable>
@@ -139,13 +138,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  logo:{
+  logo: {
     width: 80,
-    height: 80, 
+    height: 80,
     borderRadius: 40,
-    marginLeft: 80,
-    marginTop: -30
-
+    marginLeft: 50,
+    marginTop: -30,
   },
   circle: {
     width: 50,
@@ -153,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     backgroundColor: 'grey',
   },
-  avatar:{
+  avatar: {
     height: 50,
     width: 50,
     borderRadius: 25,
@@ -165,20 +163,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  headerSubtitle: {
-    fontSize: 16,
-    marginVertical: 4,
-  },
-  headerAddress: {
-    fontSize: 14,
-    color: 'grey',
-  },
   content: {
     padding: 20,
   },
-  avatar2:{
+  avatar2: {
     width: 50,
-    height: 50, 
+    height: 50,
     borderRadius: 25,
   },
   shortcutContainer: {
@@ -189,8 +179,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: 10,
   },
-  iconCircle: {
-    backgroundColor: '#e0e0e0',
+  iconCircle1: {
+    backgroundColor: 'orange',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  iconCircle2: {
+    backgroundColor: 'blue',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  iconCircle3: {
+    backgroundColor: 'red',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  iconCircle4: {
+    backgroundColor: 'green',
     width: 50,
     height: 50,
     borderRadius: 25,
@@ -264,11 +281,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'grey',
   },
-  requestNote: {
-    fontSize: 12,
-    color: 'grey',
-    marginTop: 5,
-  },
+
   footer: {
     flexDirection: 'row',
     backgroundColor: '#f8f8f8',
@@ -283,5 +296,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     marginTop: 2,
+  },
+  footerText1: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 2,
+    color: '#004d8d'
   },
 });

@@ -4,28 +4,33 @@ import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
-const Account = ({ navigation, route }) => {
+const Infomation = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.text_header}>Thông tin căn hộ</Text>
+        <Pressable onPress={() => navigation.navigate('Acount')}>
+          <AntDesign name="arrowleft" size={24} color="white" style={styles.arrowLeft} />
+        </Pressable>
+        <Text style={styles.headerTitle}>Thông tin cư dân</Text>
       </View>
 
       {/* Content */}
       <View style={styles.content}>
-        {/* Address Section */}
         <View style={styles.address_box}>
           <Entypo name="location-pin" size={24} color="white" />
           <Text style={styles.address_text}>Căn 004, Tòa A, Vinhomes Serenity</Text>
         </View>
-
-        {/* Apartment Info */}
         <View style={styles.info_section}>
           <View style={styles.info_row}>
             <Text style={styles.info_label}>Tên chủ hộ:</Text>
             <Text style={styles.info_value}>Nguyễn Văn A</Text>
+          </View>
+          <View style={styles.info_row}>
+            <Text style={styles.info_label}>Số điện thoại:</Text>
+            <Text style={styles.info_value}>0341272417</Text>
           </View>
           <View style={styles.info_row}>
             <Text style={styles.info_label}>Tầng:</Text>
@@ -39,10 +44,7 @@ const Account = ({ navigation, route }) => {
             <Text style={styles.info_label}>Tên căn hộ:</Text>
             <Text style={styles.info_value}>CH004</Text>
           </View>
-          <View style={styles.info_row}>
-            <Text style={styles.info_label}>Mã căn hộ:</Text>
-            <Text style={styles.info_value}></Text>
-          </View>
+          
           <View style={styles.info_row}>
             <Text style={styles.info_label}>Mô tả căn hộ:</Text>
             <Text style={styles.info_value}>My house</Text>
@@ -76,7 +78,7 @@ const Account = ({ navigation, route }) => {
   );
 };
 
-export default Account;
+export default Infomation;
 
 const styles = StyleSheet.create({
   container: {
@@ -86,17 +88,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   header: {
+    padding: 20,
+    alignItems: 'center',
     backgroundColor: '#a1d2f5',
     width: '100%',
     height: 80,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: 'row'
   },
-  text_header: {
+  headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
+    marginLeft: 10,
   },
+  arrowLeft: {
+    color: 'black',
+    marginTop: 5,
+  },
+
   content: {
     flex: 1,
     padding: 20,

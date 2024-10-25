@@ -52,17 +52,20 @@ const Invoice = ({navigation}) => {
       (bill) => bill.apartmentId === selectedApartment
     );
     return filteredBills.map((bill) => (
-      <View key={bill.id} style={styles.billContainer}>
+      <Pressable
+        key={bill.id}
+        style={styles.billContainer}
+        onPress={() => navigation.navigate('InvoiceDetail', { bill })}
+      >
         <View style={styles.billHeader}>
           <Text style={styles.billId}>{bill.id}</Text>
-          <Text style={styles.billLocation}>{bill.location}</Text>
         </View>
-        <Pressable style={styles.billSummary}>
+        <View style={styles.billSummary}>
           <Text style={styles.billMonth}>Hóa đơn tháng {bill.month}</Text>
           <Text style={styles.billTotal}>{bill.total} VND</Text>
-        </Pressable>
+        </View>
         {renderBillDetails(bill.details)}
-      </View>
+      </Pressable>
     ));
   };
 
@@ -70,11 +73,11 @@ const Invoice = ({navigation}) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-            <Pressable onPress={()=>navigation.navigate('Home')}>
-              <AntDesign name="arrowleft" size={24} color="White" style={styles.arowleft}/>
-            </Pressable>
-            <Text style={styles.headerText}>Chi tiết hóa đơn</Text>
-        </View>
+        <Pressable onPress={() => navigation.navigate('Home')}>
+          <AntDesign name="arrowleft" size={24} color="white" style={styles.arrowLeft}/>
+        </Pressable>
+        <Text style={styles.headerText}>Hóa đơn</Text>
+      </View>
 
       {/* Apartment List */}
       <View style={styles.apartmentList}>
@@ -93,17 +96,19 @@ const Invoice = ({navigation}) => {
       </View>
 
       {/* Bill List */}
-      <View style={styles.billList}>{renderBills()}</View>
+      <View style={styles.billList}>
+        {renderBills()}
+      </View>
 
       {/* Payment Button */}
-      <View style={styles.footer}>
-        <Pressable onPress={()=>navigation.navigate('Payment')} 
-          style={styles.payButton}         
-        >
-          <MaterialIcons name="payment" size={24} color="black" />
-          <Text style={styles.payButtonText}>Thanh toán</Text>
-        </Pressable>
-      </View>
+      {selectedApartment === 'Chưa thanh toán' && (
+        <View style={styles.footer}>
+          <Pressable onPress={() => navigation.navigate('Payment')} style={styles.payButton}>
+            <MaterialIcons name="payment" size={24} color="black" />
+            <Text style={styles.payButtonText}>Thanh toán</Text>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 };
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#a1d2f5',
     width: '100%',
     height: 80,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   headerText: {
     fontSize: 20,
@@ -129,9 +134,9 @@ const styles = StyleSheet.create({
     color: 'black',
     marginLeft: 10,
   },
-  arowleft:{
-    color: 'black',    
-    marginTop: 5,  
+  arrowLeft: {
+    color: 'black',
+    marginTop: 5,
   },
   apartmentList: {
     flexDirection: 'row',
@@ -146,19 +151,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 10,
     width: '40%',
+    justifyContent: 'center',
   },
   apartmentButtonActive: {
     backgroundColor: '#a1d2f5',
   },
   apartmentText: {
-    marginLeft: 10,
     fontSize: 14,
     fontWeight: 'bold',
-    
-  },
-  apartmentName: {
-    marginLeft: 5,
-    color: '#888',
   },
   billList: {
     padding: 10,
@@ -175,9 +175,7 @@ const styles = StyleSheet.create({
   },
   billId: {
     fontWeight: 'bold',
-  },
-  billLocation: {
-    color: '#888',
+    fontSize: 16,
   },
   billSummary: {
     flexDirection: 'row',

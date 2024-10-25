@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Pressable, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Image, FlatList, ScrollView } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -37,9 +37,6 @@ const Notification= ({ navigation,route }) => {
         <Text style={styles.price}>{item.price}</Text>
         <Text style={styles.status}>{item.status}</Text>
         
-        {/* <Pressable style={styles.payment} onPress={()=> navigation.navigate('Payment')}>
-          <Text style={styles.payment_text}>Thanh toán</Text>
-        </Pressable> */}
       </View>
     </View>
   );
@@ -58,8 +55,9 @@ const Notification= ({ navigation,route }) => {
         contentContainerStyle={styles.listContainer}
         />
       </Pressable>
-      
+     
     </View>
+
       <View style={styles.footer}>
         <Pressable style={styles.content_footer1}
           onPress={()=>navigation.navigate('Home')}>
@@ -81,7 +79,7 @@ const Notification= ({ navigation,route }) => {
           <Text style={styles.text_footer_notification}>Thông báo</Text>
         </Pressable>
         <Pressable style={styles.content_footer4}
-          onPress={()=>navigation.navigate('Account')}
+          onPress={()=>navigation.navigate('Acount')}
         >
           <MaterialCommunityIcons name="account" size={24} color="#black" />
           <Text style={styles.text_footer_account}>Tài khoản</Text>
@@ -107,11 +105,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   text_header: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: 'white',
+    color: 'black',
     marginTop: 30,
-    marginLeft: 10,
+    marginLeft: 30,
     
   },
   content:{
