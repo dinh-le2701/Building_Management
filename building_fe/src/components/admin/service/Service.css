@@ -1,0 +1,10 @@
+.service {
+    min-height: 92vh;
+}
+table{
+    border-radius: 40%;
+}
+
+.table-content{
+    border-radius: 10px;
+}
